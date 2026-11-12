@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+}
+
+group = 'ru.homework'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.13.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'io.rest-assured:rest-assured:5.5.6'
+    testImplementation 'org.assertj:assertj-core:3.27.6'
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.19.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    systemProperty 'file.encoding', 'UTF-8'
+    systemProperty 'api.baseUrl', providers.gradleProperty('baseUrl').orElse(providers.environmentVariable('API_BASE_URL')).getOrElse('http://localhost:8080')
+    systemProperty 'api.username', providers.environmentVariable('API_USERNAME').getOrElse('admin')
+    systemProperty 'api.password', providers.environmentVariable('API_PASSWORD').getOrElse('secret123')
+    maxParallelForks = 1
+    testLogging {
+        events 'passed', 'failed', 'skipped'
+        exceptionFormat = 'full'
+        showStandardStreams = true
+    }
+    outputs.upToDateWhen { false }
+}
+
+tasks.register('apiTest', Test) {
+    group = 'verification'
+    description = 'Runs REST Assured API tests.'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform {
+        includeTags 'api'
+    }
+}

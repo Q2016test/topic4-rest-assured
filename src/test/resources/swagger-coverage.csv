@@ -1,0 +1,11 @@
+method,path,status,test
+GET,/goods/list,200,GoodsApiTest.listEmpty200
+POST,/goods/add,200,GoodsApiTest.add200
+POST,/goods/add,400,GoodsApiTest.addInvalid400
+GET,/goods/{id},200,GoodsApiTest.get200
+GET,/goods/{id},404,GoodsApiTest.getMissing404
+DELETE,/goods/{id},200,GoodsApiTest.delete200
+DELETE,/goods/{id},404,GoodsApiTest.deleteMissing404
+PATCH,/goods/{id},200,GoodsApiTest.patch200
+PATCH,/goods/{id},400,GoodsApiTest.patchInvalid400
+PATCH,/goods/{id},404,GoodsApiTest.patchMissing404
